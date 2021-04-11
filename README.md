@@ -18,6 +18,7 @@ As an arbitrary step to avoid legal action, we have not provided you with the ur
 1. Rename ```.env_template``` to ```.env```
 2. Use your favorite search engine to find a fitting raffle (any Kellogg's Football raffle running from 08.03.21 to 07.09.21 will do) and set the ``URL`` variable (leaving out the part after the tld).
 
+(Note that for reasons, this online raffle has opening hours. Therefore, this script only works from 9.00 to 17.00 CEST)
 
 ### Deployment
 
@@ -40,6 +41,7 @@ docker-compose up -d
 ```
 
 and watch in awe as ```./output/codes.txt``` fills with strings that look earily similar to raffle codes that work for Kellogg's Football raffles running from 08.03.21 to 07.09.21.
+
 
 Stop the tool with
 
