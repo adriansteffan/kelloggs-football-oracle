@@ -1,13 +1,13 @@
 # Kellogg's Football 2021 Code Creator
 
 Have you ever wondered what valid codes for the Kelloggs 2021 Football raffle in Germany look like? **You're in luck!**
-With this funky little tool, you will get to see thousands of examples a day without developing diabete type 2 from excessive cereal consumption.  
+With this funky little tool, you will get to see thousands of examples a day without developing diabetes type 2 from excessive cereal consumption.  
 
 Kellogg's was friendly enough to provide the public with a service that tells you if a given list of codes qualifies you to enter their 2021 football raffle.
 All we had to do is build a tool that annoys this service until we are lucky enough to find a working code.
 
 We are using an advanced statistical approach to generate the candidates for valid codes called "guessing".
-Considering that there are only 208827064576 possible codes to go through and we are heavily bottlenecked by their api running on what feels like a 2007 Dell notebook with an unlicensed windows server installation, this should be a breeze.
+Considering that there are only 208827064576 possible codes to go through and we are heavily bottlenecked by their api running on what feels like a 2007 Dell notebook with an unlicensed Windows server installation, this should be a breeze.
 
 **Obvious disclaimer**: Don't use this to fraudulently enter the raffle. For one, it is legally and morally questionable. More importantly though, doing so will reduce our chances of winning the 43" Sony flatscreen. Please show some consideration.
 
@@ -64,7 +64,7 @@ python3.7 main.py
 
 ### Running the tests
 
-We are brute forcing our way through a raffle for childrens serial. Do you really think this is a context where the term "unit test" has any meaning?
+We are brute forcing our way through a raffle for children's cereal. Do you really think this is a context where the term "unit test" has any meaning?
 
 
 ## Built With
@@ -82,8 +82,8 @@ story that explains why we are in the "possession" of tens of thousands of Kello
 
 * Going off of current rates, we can assume that there are 90 million valid codes.
 * This allows us to estimate an utterly useless upper limit of Kellogg's daily cereal box sales in Germany of about 5 million.
-* To get all codes the legit way, one would have to consume about 33750000 Kilograms of Kellogg's cereal.
-* This is about 148837500000 calories (kcal), enough to feed the population of the Czech Republic for an entire week.
+* To get all codes the legit way, one would have to consume about 33 750 000 Kilograms of Kellogg's cereal.
+* This is about 148 837 500 000 calories (kcal), enough to feed the population of the Czech Republic for an entire week.
 
 ## Authors
 
