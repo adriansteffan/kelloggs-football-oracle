@@ -62,7 +62,7 @@ python3.7 main.py
 
 ### Running the tests
 
-We are brute forcing our way through a raffle for childrens serial. Do you really think this is a context where the term "unit test" has any meaning?
+We are brute forcing our way through a raffle for children's cereal. Do you really think this is a context where the term "unit test" has any meaning?
 
 
 ## Built With
