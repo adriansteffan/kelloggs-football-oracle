@@ -87,7 +87,7 @@ story that explains why we are in the "possession" of tens of thousands of Kello
 
 ## Authors
 
-* **Adrian Steffan** - [adriansteffan](https://github.com/adriansteffan)
+* **Adrian Steffan** - [adriansteffan](https://github.com/adriansteffan) [website](https://adriansteffan.com/)
 * **Till Müller** - [tillmueller](https://github.com/tillmueller)
 * **Vera Lily Eagle**
 * **P. Lisa Donsume**
